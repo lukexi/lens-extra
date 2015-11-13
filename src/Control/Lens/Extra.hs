@@ -12,6 +12,7 @@ import Control.Lens as Extra hiding
   , (*=) 
   ) 
 import Control.Monad.State
+import Control.Monad.Reader
 
 forceState :: (MonadState s m) => m ()
 forceState = do x <- get; x `seq` return ()
@@ -52,3 +53,10 @@ l *= x = modify' (l *~ x)
 {-# INLINE (*=) #-}
 infix 4 *=
 
+-- | Restricts an action to MonadReader from within MonadState
+immutably :: MonadState s m => ReaderT s m a -> m a
+immutably a = runReaderT a =<< get
+
+-- | Allows using a MonadState function that just uses "get" from within MonadReader
+statefully :: MonadReader s m => StateT s m a -> m a
+statefully a = evalStateT a =<< ask
