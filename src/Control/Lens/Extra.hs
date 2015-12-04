@@ -30,7 +30,7 @@ l ?= x = modify' (l ?~ x)
 infix 4 ?=
 
 -- | (%=) using strict modify'
-(%=) :: (Profunctor p, MonadState s m) => Setting p s s a b -> p a b -> m ()
+(%=) :: MonadState s m => ASetter s s a b -> (a -> b) -> m ()
 l %= f = modify' (l %~ f)
 {-# INLINE (%=) #-}
 infix 4 %=
