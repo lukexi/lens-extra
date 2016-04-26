@@ -1,3 +1,4 @@
+{-# LANGUAGE RankNTypes #-}
 module Control.Lens.Extra 
   ( module Extra
   , module Control.Lens.Extra
@@ -10,6 +11,7 @@ import Control.Lens as Extra hiding
   , (+=) 
   , (-=)
   , (*=) 
+  , (<~)
   ) 
 import Control.Monad.State
 import Control.Monad.Reader
@@ -52,6 +54,25 @@ infix 4 -=
 l *= x = modify' (l *~ x)
 {-# INLINE (*=) #-}
 infix 4 *=
+
+-- | (<~) using strict modify'
+(<~) :: MonadState s m => ASetter s s a b -> m b -> m ()
+l <~ mb = mb >>= (l .=)
+{-# INLINE (<~) #-}
+infix 4 <~
+
+-- | Modify a lens target with a monadic action
+(%=~) :: forall s m a. (MonadState s m) => Traversal' s a -> (a -> m a) -> m ()
+l %=~ action = do
+    preuse l >>= mapM_ (\x -> do
+        l <~ action x)
+{-# INLINE (%=~) #-}
+infix 4 %=~
+
+(>>~) :: forall s m a. (MonadState s m) => Traversal' s a -> (a -> m ()) -> m ()
+l >>~ action = preuse l >>= mapM_ action
+{-# INLINE (>>~) #-}
+infix 4 >>~
 
 -- | Restricts an action to MonadReader from within MonadState
 immutably :: MonadState s m => ReaderT s m a -> m a
