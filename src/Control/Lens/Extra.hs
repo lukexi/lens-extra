@@ -1,19 +1,19 @@
 {-# LANGUAGE RankNTypes #-}
-module Control.Lens.Extra 
+module Control.Lens.Extra
   ( module Extra
   , module Control.Lens.Extra
   ) where
 
-import Control.Lens as Extra hiding 
-  ( (.=) 
-  , (?=) 
-  , (%=) 
-  , (+=) 
+import Control.Lens as Extra hiding
+  ( (.=)
+  , (?=)
+  , (%=)
+  , (+=)
   , (-=)
-  , (*=) 
+  , (*=)
   , (<~)
-  ) 
-import Control.Monad.State
+  )
+import Control.Monad.State.Strict
 import Control.Monad.Reader
 
 forceState :: (MonadState s m) => m ()
